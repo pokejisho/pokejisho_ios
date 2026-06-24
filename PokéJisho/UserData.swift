@@ -18,12 +18,24 @@ final class UserData: ObservableObject {
         defaults.set(Array(favorites), forKey: "favorites")
     }
 
+    func removeFavorites(_ ids: [String]) {
+        favorites.subtract(ids)
+        defaults.set(Array(favorites), forKey: "favorites")
+    }
+
     func addRecent(_ term: String) {
         let t = term.trimmingCharacters(in: .whitespaces)
         guard t.count >= 2 else { return }
         recents.removeAll { $0 == t }
         recents.insert(t, at: 0)
         if recents.count > 15 { recents = Array(recents.prefix(15)) }
+        defaults.set(recents, forKey: "recents")
+    }
+
+    func removeRecents(at offsets: IndexSet) {
+        for index in offsets.sorted(by: >) where recents.indices.contains(index) {
+            recents.remove(at: index)
+        }
         defaults.set(recents, forKey: "recents")
     }
 }
