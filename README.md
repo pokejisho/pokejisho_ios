@@ -1,6 +1,6 @@
 # PokéJisho
 
-A native SwiftUI iOS app (iOS 17+) for looking up Pokémon names between Japanese and English.
+A native SwiftUI iOS app for looking up Pokémon names between Japanese and English.
 Type a term and get live-filtered results, then open a detail screen enriched via
 [PokéAPI](https://pokeapi.co). Includes favorites, recent searches, copy-to-clipboard, type
 filtering, and an in-app language toggle (EN/JA).
@@ -23,7 +23,7 @@ cd PokeJishoKit && swift test
 Build the app:
 
 ```bash
-xcodebuild -scheme "PokéJisho" -destination 'platform=iOS Simulator,name=iPhone 16' build
+xcodebuild -scheme "PokéJisho" -destination 'generic/platform=iOS Simulator' build
 ```
 
 ## Acknowledgements
