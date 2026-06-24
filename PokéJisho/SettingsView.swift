@@ -4,6 +4,10 @@ struct SettingsView: View {
     @EnvironmentObject var loc: LocalizationManager
     @Environment(\.dismiss) private var dismiss
 
+    private var currentYear: String {
+        String(Calendar.current.component(.year, from: Date()))
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -16,6 +20,27 @@ struct SettingsView: View {
                         Text("English").tag(AppLanguage.en)
                         Text("日本語").tag(AppLanguage.ja)
                     }
+                }
+
+                Section(loc.string("about.title")) {
+                    Text(loc.string("about.fansite"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Text(loc.string("about.license"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Text(String(format: loc.string("about.copyright"), currentYear))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Text(loc.string("about.pokeapi"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Link(loc.string("about.pokeapi.link"),
+                         destination: URL(string: "https://pokeapi.co")!)
+                        .font(.footnote)
+                    Link(loc.string("about.github"),
+                         destination: URL(string: "https://github.com/mca62511/pokejisho")!)
+                        .font(.footnote)
                 }
             }
             .navigationTitle(loc.string("settings.title"))
