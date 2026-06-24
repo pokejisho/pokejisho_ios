@@ -1,0 +1,144 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "app.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PokéJisho" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ポケ辞書" } }
+      }
+    },
+    "search.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Search Pokémon, moves, items…" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ポケモン・技・道具を検索…" } }
+      }
+    },
+    "help.welcome" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome to PokéJisho! My name is Sagumi." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ようこそポケ辞書へ。探見です。" } }
+      }
+    },
+    "help.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Type any Pokémon, move, item, ability, or nature to see its name in English and Japanese." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ポケモンの名前、技、アイテム、特性、性格を入力すると、日本語と英語の名前を調べられます。" } }
+      }
+    },
+    "results.none" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Can't find it? Submit an issue on GitHub." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "見つかりませんか？ GitHubでIssueを送ってください。" } }
+      }
+    },
+    "detail.romaji" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Romaji" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ローマ字" } }
+      }
+    },
+    "detail.katakana" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Katakana" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "カタカナ" } }
+      }
+    },
+    "detail.learnMore" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Learn more" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "詳しく見る" } }
+      }
+    },
+    "detail.bulbapedia" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bulbapedia (EN)" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Bulbapedia（英）" } }
+      }
+    },
+    "detail.pokewiki" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "ポケモンwiki (JA)" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ポケモンwiki（和）" } }
+      }
+    },
+    "detail.copy" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Copy" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "コピー" } }
+      }
+    },
+    "settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定" } }
+      }
+    },
+    "settings.language" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "言語" } }
+      }
+    },
+    "settings.language.system" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "システム" } }
+      }
+    },
+    "favorites.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Favorites" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "お気に入り" } }
+      }
+    },
+    "recent.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Recent" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "最近の検索" } }
+      }
+    },
+    "type.pokemon" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pokémon" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ポケモン" } }
+      }
+    },
+    "type.move" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Move" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "技" } }
+      }
+    },
+    "type.item" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Item" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "道具" } }
+      }
+    },
+    "type.ability" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ability" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "特性" } }
+      }
+    },
+    "type.nature" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Nature" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "性格" } }
+      }
+    },
+    "type.character" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Character" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャラクター" } }
+      }
+    },
+    "type.location" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Location" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "地名" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
