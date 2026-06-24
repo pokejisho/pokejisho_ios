@@ -71,6 +71,7 @@ struct DetailView: View {
                 } label: {
                     Image(systemName: "doc.on.doc")
                 }
+                .accessibilityLabel(loc.string("detail.copy"))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -78,6 +79,7 @@ struct DetailView: View {
                 } label: {
                     Image(systemName: userData.isFavorite(entry.id) ? "star.fill" : "star")
                 }
+                .accessibilityLabel(loc.string(userData.isFavorite(entry.id) ? "favorite.remove" : "favorite.add"))
             }
         }
         .sheet(item: $safariURL) { item in

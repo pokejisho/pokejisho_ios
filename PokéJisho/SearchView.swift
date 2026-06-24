@@ -6,16 +6,23 @@ struct SearchView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var loc: LocalizationManager
     @State private var showSettings = false
+    private let store: DictionaryStore
 
     init(store: DictionaryStore) {
+        self.store = store
         _vm = StateObject(wrappedValue: SearchViewModel(store: store))
+    }
+
+    private var favoriteEntries: [DictionaryEntry] {
+        store.entries(ids: userData.favorites).sorted { $0.english < $1.english }
     }
 
     var body: some View {
         NavigationStack {
             Group {
                 if !vm.hasQuery {
-                    HelpView(recents: userData.recents) { vm.query = $0 }
+                    HelpView(favorites: favoriteEntries,
+                             recents: userData.recents) { vm.query = $0 }
                 } else if vm.results.isEmpty {
                     NoResultsView()
                 } else {
@@ -27,6 +34,7 @@ struct SearchView: View {
                 ToolbarItem(placement: .topBarLeading) { filterMenu }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                        .accessibilityLabel(loc.string("settings.title"))
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
@@ -39,7 +47,7 @@ struct SearchView: View {
             Button {
                 vm.filter = nil
             } label: {
-                Label("All", systemImage: vm.filter == nil ? "checkmark" : "")
+                Label(loc.string("filter.all"), systemImage: vm.filter == nil ? "checkmark" : "")
             }
             ForEach(EntryType.allCases, id: \.self) { type in
                 Button {
@@ -52,6 +60,7 @@ struct SearchView: View {
         } label: {
             Image(systemName: vm.filter == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
         }
+        .accessibilityLabel(loc.string("filter.title"))
     }
 
     private var resultsList: some View {
@@ -68,6 +77,7 @@ struct SearchView: View {
             }
         }
         .listStyle(.plain)
+        .scrollDismissesKeyboard(.immediately)
     }
 
     private func row(_ entry: DictionaryEntry) -> some View {
@@ -81,6 +91,7 @@ struct SearchView: View {
 }
 
 struct HelpView: View {
+    let favorites: [DictionaryEntry]
     let recents: [String]
     let onSelectRecent: (String) -> Void
     @EnvironmentObject var loc: LocalizationManager
@@ -98,11 +109,21 @@ struct HelpView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
+                if !favorites.isEmpty {
+                    section(title: loc.string("favorites.title")) {
+                        ForEach(favorites) { entry in
+                            NavigationLink {
+                                DetailView(entry: entry)
+                            } label: {
+                                EntryRow(entry: entry)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
                 if !recents.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(loc.string("recent.title"))
-                            .font(.caption).bold()
-                            .foregroundStyle(.secondary)
+                    section(title: loc.string("recent.title")) {
                         ForEach(recents, id: \.self) { term in
                             Button {
                                 onSelectRecent(term)
@@ -116,12 +137,22 @@ struct HelpView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top)
                 }
             }
             .padding()
         }
+    }
+
+    @ViewBuilder
+    private func section<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.caption).bold()
+                .foregroundStyle(.secondary)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top)
     }
 }
 
