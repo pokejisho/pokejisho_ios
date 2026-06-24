@@ -8,6 +8,7 @@ struct DetailView: View {
     @State private var apiDetail: PokeAPIDetail?
     @State private var loading = false
     @State private var safariURL: IdentifiableURL?
+    @State private var copyTrigger = 0
 
     private static let service = PokeAPIService()
 
@@ -66,6 +67,7 @@ struct DetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     UIPasteboard.general.string = "\(entry.english) / \(entry.japanese)"
+                    copyTrigger += 1
                 } label: {
                     Image(systemName: "doc.on.doc")
                 }
@@ -86,5 +88,7 @@ struct DetailView: View {
             apiDetail = await Self.service.detail(for: entry)
             loading = false
         }
+        .sensoryFeedback(.success, trigger: copyTrigger)
+        .sensoryFeedback(.impact(weight: .light), trigger: userData.isFavorite(entry.id))
     }
 }
