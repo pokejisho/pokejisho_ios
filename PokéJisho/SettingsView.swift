@@ -46,7 +46,7 @@ struct SettingsView: View {
                          destination: URL(string: "https://pokeapi.co")!)
                         .font(.footnote)
                     Link(loc.string("about.github"),
-                         destination: URL(string: "https://github.com/MichaelCharles/pokejisho")!)
+                         destination: URL(string: "https://github.com/MichaelCharles/pokejisho_ios")!)
                         .font(.footnote)
                     LabeledContent(loc.string("settings.version"), value: appVersion)
                         .font(.footnote)
