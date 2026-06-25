@@ -16,6 +16,7 @@ struct SearchView: View {
     @State private var showCamera = false
     @State private var captured: CapturedImage?
     @State private var showCameraDeniedAlert = false
+    @State private var pendingImage: UIImage?
     private let store: DictionaryStore
 
     init(store: DictionaryStore) {
@@ -72,11 +73,16 @@ struct SearchView: View {
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
-            .fullScreenCover(isPresented: $showCamera) {
+            .fullScreenCover(isPresented: $showCamera, onDismiss: {
+                if let image = pendingImage {
+                    pendingImage = nil
+                    captured = CapturedImage(image: image)
+                }
+            }) {
                 CameraPicker(
                     onCapture: { image in
+                        pendingImage = image
                         showCamera = false
-                        captured = CapturedImage(image: image)
                     },
                     onCancel: { showCamera = false }
                 )
