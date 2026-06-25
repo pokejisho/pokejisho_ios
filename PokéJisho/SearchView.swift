@@ -1,11 +1,21 @@
 import SwiftUI
+import AVFoundation
 import PokeJishoKit
+
+/// Wraps a captured image so it can drive an item-based presentation.
+private struct CapturedImage: Identifiable {
+    let id = UUID()
+    let image: UIImage
+}
 
 struct SearchView: View {
     @StateObject private var vm: SearchViewModel
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var loc: LocalizationManager
     @State private var showSettings = false
+    @State private var showCamera = false
+    @State private var captured: CapturedImage?
+    @State private var showCameraDeniedAlert = false
     private let store: DictionaryStore
 
     init(store: DictionaryStore) {
@@ -15,6 +25,21 @@ struct SearchView: View {
 
     private var favoriteEntries: [DictionaryEntry] {
         store.entries(ids: userData.favorites).sorted { $0.english < $1.english }
+    }
+
+    private func startScan() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            showCamera = true
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    if granted { showCamera = true } else { showCameraDeniedAlert = true }
+                }
+            }
+        default:
+            showCameraDeniedAlert = true
+        }
     }
 
     var body: some View {
@@ -38,11 +63,45 @@ struct SearchView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { filterMenu }
                 ToolbarItem(placement: .topBarTrailing) {
+                    Button { startScan() } label: { Image(systemName: "camera") }
+                        .accessibilityLabel(loc.string("scan.button"))
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: { Image(systemName: "gearshape") }
                         .accessibilityLabel(loc.string("settings.title"))
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .fullScreenCover(isPresented: $showCamera) {
+                CameraPicker(
+                    onCapture: { image in
+                        showCamera = false
+                        captured = CapturedImage(image: image)
+                    },
+                    onCancel: { showCamera = false }
+                )
+                .ignoresSafeArea()
+            }
+            .fullScreenCover(item: $captured) { item in
+                TextSelectionView(
+                    image: item.image,
+                    onSearch: { text in
+                        captured = nil
+                        vm.query = text
+                    },
+                    onCancel: { captured = nil }
+                )
+            }
+            .alert(loc.string("camera.denied.title"), isPresented: $showCameraDeniedAlert) {
+                Button(loc.string("common.openSettings")) {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button(loc.string("common.cancel"), role: .cancel) {}
+            } message: {
+                Text(loc.string("camera.denied.message"))
+            }
         }
         .searchable(text: $vm.query, prompt: loc.string("search.placeholder"))
     }

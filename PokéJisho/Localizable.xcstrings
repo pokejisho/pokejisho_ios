@@ -328,6 +328,30 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
       }
     },
+    "scan.button" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Scan text from a photo" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真から文字を読み取る" } }
+      }
+    },
+    "camera.denied.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Camera Access Needed" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "カメラへのアクセスが必要です" } }
+      }
+    },
+    "camera.denied.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enable camera access in Settings to scan text from photos." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真から文字を読み取るには、設定でカメラへのアクセスを許可してください。" } }
+      }
+    },
+    "common.openSettings" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Settings" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定を開く" } }
+      }
+    },
     "scan.title" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Select Text" } },
