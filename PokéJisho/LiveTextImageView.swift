@@ -27,4 +27,11 @@ struct LiveTextImageView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIImageView, context: Context) {}
+
+    /// Fill the offered space instead of the image's native (huge) size, so
+    /// `.scaleAspectFit` fits the whole photo to the screen rather than showing
+    /// a zoomed-in center crop.
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UIImageView, context: Context) -> CGSize? {
+        proposal.replacingUnspecifiedDimensions()
+    }
 }
