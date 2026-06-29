@@ -244,22 +244,6 @@
         }
       }
     },
-    "detail.katakana" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Katakana"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カタカナ"
-          }
-        }
-      }
-    },
     "detail.learnMore" : {
       "localizations" : {
         "en" : {

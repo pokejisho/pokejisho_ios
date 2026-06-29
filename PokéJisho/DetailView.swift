@@ -40,7 +40,6 @@ struct DetailView: View {
                 }
                 LabeledContent("English", value: entry.english)
                 LabeledContent("日本語", value: entry.japanese)
-                LabeledContent(loc.string("detail.katakana"), value: entry.katakana)
                 LabeledContent(loc.string("detail.romaji"), value: entry.romaji)
             }
 
