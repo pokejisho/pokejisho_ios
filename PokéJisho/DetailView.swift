@@ -19,8 +19,8 @@ struct DetailView: View {
     }
     private var pokewikiURL: URL {
         let encoded = entry.japanese.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? entry.japanese
-        return URL(string: "https://wiki.xn--rckteqa2e.com/wiki/\(encoded)")
-            ?? URL(string: "https://wiki.xn--rckteqa2e.com")!
+        return URL(string: "https://wiki.pokemonwiki.com/wiki/\(encoded)")
+            ?? URL(string: "https://wiki.pokemonwiki.com")!
     }
 
     var body: some View {
