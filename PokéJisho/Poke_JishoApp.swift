@@ -12,6 +12,7 @@ import PokeJishoKit
 struct Poke_JishoApp: App {
     @StateObject private var userData = UserData()
     @StateObject private var loc = LocalizationManager()
+    @StateObject private var appearance = AppearanceManager()
     private let store: DictionaryStore
 
     init() {
@@ -23,7 +24,9 @@ struct Poke_JishoApp: App {
             ContentView(store: store)
                 .environmentObject(userData)
                 .environmentObject(loc)
+                .environmentObject(appearance)
                 .tint(.accentColor)
+                .preferredColorScheme(appearance.appearance.colorScheme)
         }
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var loc: LocalizationManager
+    @EnvironmentObject var appearance: AppearanceManager
     @Environment(\.dismiss) private var dismiss
 
     private var currentYear: String {
@@ -18,7 +19,16 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(loc.string("settings.language")) {
+                Section(loc.string("settings.display")) {
+                    Picker(loc.string("settings.appearance"), selection: Binding(
+                        get: { appearance.appearance },
+                        set: { appearance.appearance = $0 }
+                    )) {
+                        Text(loc.string("settings.appearance.system")).tag(AppAppearance.system)
+                        Text(loc.string("settings.appearance.dark")).tag(AppAppearance.dark)
+                        Text(loc.string("settings.appearance.light")).tag(AppAppearance.light)
+                    }
+
                     Picker(loc.string("settings.language"), selection: Binding(
                         get: { loc.language },
                         set: { loc.language = $0 }
