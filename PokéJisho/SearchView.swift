@@ -13,6 +13,7 @@ struct SearchView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var loc: LocalizationManager
     @State private var showSettings = false
+    @State private var searchPresented = false
     @State private var showCamera = false
     @State private var captured: CapturedImage?
     @State private var showCameraDeniedAlert = false
@@ -60,7 +61,19 @@ struct SearchView: View {
                     resultsList
                 }
             }
-            .navigationTitle(loc.string("app.name"))
+            // Swiping right while results are shown acts as "back": clear the
+            // search and return to the landing screen. Simultaneous so the
+            // list's vertical scrolling keeps working.
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 30)
+                    .onEnded { value in
+                        guard vm.hasQuery,
+                              value.translation.width > 80,
+                              abs(value.translation.height) < abs(value.translation.width) else { return }
+                        vm.query = ""
+                        searchPresented = false
+                    }
+            )
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { filterMenu }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -109,7 +122,7 @@ struct SearchView: View {
                 Text(loc.string("camera.denied.message"))
             }
         }
-        .searchable(text: $vm.query, prompt: loc.string("search.placeholder"))
+        .searchable(text: $vm.query, isPresented: $searchPresented, prompt: loc.string("search.placeholder"))
     }
 
     private var filterMenu: some View {
