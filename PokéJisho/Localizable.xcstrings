@@ -260,6 +260,22 @@
         }
       }
     },
+    "detail.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an entry to see its details."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目を選ぶと、ここに詳細が表示されます。"
+          }
+        }
+      }
+    },
     "detail.pokewiki" : {
       "localizations" : {
         "en" : {

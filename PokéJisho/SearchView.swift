@@ -18,6 +18,8 @@ struct SearchView: View {
     @State private var captured: CapturedImage?
     @State private var showCameraDeniedAlert = false
     @State private var pendingImage: UIImage?
+    @State private var selected: DictionaryEntry?
+    @Environment(\.horizontalSizeClass) private var sizeClass
     private let store: DictionaryStore
 
     init(store: DictionaryStore) {
@@ -45,84 +47,112 @@ struct SearchView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if !vm.hasQuery {
-                    HelpView(favorites: favoriteEntries,
-                             recents: userData.recents,
-                             onSelectRecent: { vm.query = $0 },
-                             onDeleteRecents: { userData.removeRecents(at: $0) },
-                             onDeleteFavorites: { offsets in
-                                 userData.removeFavorites(offsets.map { favoriteEntries[$0].id })
-                             })
-                } else if vm.results.isEmpty {
-                    NoResultsView()
-                } else {
-                    resultsList
-                }
-            }
-            // Swiping right while results are shown acts as "back": clear the
-            // search and return to the landing screen. Simultaneous so the
-            // list's vertical scrolling keeps working.
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 30)
-                    .onEnded { value in
-                        guard vm.hasQuery,
-                              value.translation.width > 80,
-                              abs(value.translation.height) < abs(value.translation.width) else { return }
-                        vm.query = ""
-                        searchPresented = false
-                    }
-            )
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) { filterMenu }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { startScan() } label: { Image(systemName: "camera") }
-                        .accessibilityLabel(loc.string("scan.button"))
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { showSettings = true } label: { Image(systemName: "gearshape") }
-                        .accessibilityLabel(loc.string("settings.title"))
-                }
-            }
-            .sheet(isPresented: $showSettings) { SettingsView() }
-            .fullScreenCover(isPresented: $showCamera, onDismiss: {
-                if let image = pendingImage {
-                    pendingImage = nil
-                    captured = CapturedImage(image: image)
-                }
-            }) {
-                CameraPicker(
-                    onCapture: { image in
-                        pendingImage = image
-                        showCamera = false
-                    },
-                    onCancel: { showCamera = false }
-                )
-                .ignoresSafeArea()
-            }
-            .fullScreenCover(item: $captured) { item in
-                TextSelectionView(
-                    image: item.image,
-                    onSearch: { text in
-                        captured = nil
-                        vm.query = text
-                    },
-                    onCancel: { captured = nil }
-                )
-            }
-            .alert(loc.string("camera.denied.title"), isPresented: $showCameraDeniedAlert) {
-                Button(loc.string("common.openSettings")) {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
-                Button(loc.string("common.cancel"), role: .cancel) {}
-            } message: {
-                Text(loc.string("camera.denied.message"))
+        // Two columns when the width is regular (iPhone Duo's inner display,
+        // iPad); collapses to a push stack when compact (folded, other iPhones).
+        NavigationSplitView {
+            sidebar
+        } detail: {
+            if let selected {
+                DetailView(entry: selected)
+                    .id(selected.id)
+            } else {
+                DetailPlaceholderView()
             }
         }
-        .searchable(text: $vm.query, isPresented: $searchPresented, prompt: loc.string("search.placeholder"))
+        // SwiftUI only reads the search placement once, so rebuild the split
+        // view when folding or unfolding changes the size class.
+        .id(sizeClass)
+        .onChange(of: selected) { _, entry in
+            if entry != nil, vm.hasQuery { userData.addRecent(vm.query) }
+        }
+    }
+
+    private var sidebar: some View {
+        Group {
+            if !vm.hasQuery {
+                HelpView(favorites: favoriteEntries,
+                         selection: $selected,
+                         recents: userData.recents,
+                         onSelectRecent: { vm.query = $0 },
+                         onDeleteRecents: { userData.removeRecents(at: $0) },
+                         onDeleteFavorites: { offsets in
+                             userData.removeFavorites(offsets.map { favoriteEntries[$0].id })
+                         })
+            } else if vm.results.isEmpty {
+                NoResultsView()
+            } else {
+                resultsList
+            }
+        }
+        // Swiping right while results are shown acts as "back": clear the
+        // search and return to the landing screen. Simultaneous so the
+        // list's vertical scrolling keeps working.
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 30)
+                .onEnded { value in
+                    guard vm.hasQuery,
+                          value.translation.width > 80,
+                          abs(value.translation.height) < abs(value.translation.width) else { return }
+                    vm.query = ""
+                    searchPresented = false
+                    selected = nil
+                }
+        )
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) { filterMenu }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { startScan() } label: { Image(systemName: "camera") }
+                    .accessibilityLabel(loc.string("scan.button"))
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                    .accessibilityLabel(loc.string("settings.title"))
+            }
+        }
+        .sheet(isPresented: $showSettings) { SettingsView() }
+        .fullScreenCover(isPresented: $showCamera, onDismiss: {
+            if let image = pendingImage {
+                pendingImage = nil
+                captured = CapturedImage(image: image)
+            }
+        }) {
+            CameraPicker(
+                onCapture: { image in
+                    pendingImage = image
+                    showCamera = false
+                },
+                onCancel: { showCamera = false }
+            )
+            .ignoresSafeArea()
+        }
+        .fullScreenCover(item: $captured) { item in
+            TextSelectionView(
+                image: item.image,
+                onSearch: { text in
+                    captured = nil
+                    vm.query = text
+                },
+                onCancel: { captured = nil }
+            )
+        }
+        .alert(loc.string("camera.denied.title"), isPresented: $showCameraDeniedAlert) {
+            Button(loc.string("common.openSettings")) {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button(loc.string("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(loc.string("camera.denied.message"))
+        }
+        .searchable(text: $vm.query, isPresented: $searchPresented, placement: searchPlacement,
+                    prompt: loc.string("search.placeholder"))
+    }
+
+    /// In the two-column layout the default bottom search field covers the
+    /// sidebar's last row, so pin it to the top. Compact keeps the system default.
+    private var searchPlacement: SearchFieldPlacement {
+        sizeClass == .regular ? .navigationBarDrawer(displayMode: .always) : .automatic
     }
 
     private var filterMenu: some View {
@@ -147,7 +177,7 @@ struct SearchView: View {
     }
 
     private var resultsList: some View {
-        List {
+        List(selection: $selected) {
             if !vm.results.priority.isEmpty {
                 Section {
                     ForEach(vm.results.priority) { row($0) }
@@ -164,10 +194,7 @@ struct SearchView: View {
     }
 
     private func row(_ entry: DictionaryEntry) -> some View {
-        NavigationLink {
-            DetailView(entry: entry)
-                .onAppear { userData.addRecent(vm.query) }
-        } label: {
+        NavigationLink(value: entry) {
             EntryRow(entry: entry)
         }
     }
@@ -175,6 +202,7 @@ struct SearchView: View {
 
 struct HelpView: View {
     let favorites: [DictionaryEntry]
+    @Binding var selection: DictionaryEntry?
     let recents: [String]
     let onSelectRecent: (String) -> Void
     let onDeleteRecents: (IndexSet) -> Void
@@ -182,7 +210,7 @@ struct HelpView: View {
     @EnvironmentObject var loc: LocalizationManager
 
     var body: some View {
-        List {
+        List(selection: $selection) {
             Section {
                 HStack(alignment: .center, spacing: 4) {
                     VStack(alignment: .leading, spacing: 6) {
@@ -218,9 +246,7 @@ struct HelpView: View {
             if !favorites.isEmpty {
                 Section(loc.string("favorites.title")) {
                     ForEach(favorites) { entry in
-                        NavigationLink {
-                            DetailView(entry: entry)
-                        } label: {
+                        NavigationLink(value: entry) {
                             EntryRow(entry: entry)
                         }
                     }
@@ -270,5 +296,23 @@ struct NoResultsView: View {
         } description: {
             Text(loc.string("results.none"))
         }
+    }
+}
+
+/// Shown in the detail column until an entry is chosen. Only visible when the
+/// split view has room for two columns.
+struct DetailPlaceholderView: View {
+    @EnvironmentObject var loc: LocalizationManager
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "character.book.closed.ja")
+                .font(.system(size: 56))
+                .foregroundStyle(.secondary)
+            Text(loc.string("detail.placeholder"))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
     }
 }
