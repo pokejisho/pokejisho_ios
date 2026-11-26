@@ -63,7 +63,12 @@ struct SearchView: View {
         // view when folding or unfolding changes the size class.
         .id(sizeClass)
         .onChange(of: selected) { _, entry in
-            if entry != nil, vm.hasQuery { userData.addRecent(vm.query) }
+            guard entry != nil else { return }
+            if vm.hasQuery { userData.addRecent(vm.query) }
+            // In two columns nothing gets pushed, so the search keyboard would
+            // stay up and cover the detail. Dismiss it without ending the search.
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                            to: nil, from: nil, for: nil)
         }
     }
 
