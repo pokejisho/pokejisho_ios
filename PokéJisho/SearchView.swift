@@ -265,6 +265,9 @@ struct HelpView: View {
                                 Text(term)
                                 Spacer()
                             }
+                            // Plain buttons only hit-test drawn content; make the
+                            // whole row, including the Spacer, tappable.
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                     }
